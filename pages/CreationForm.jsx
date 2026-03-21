@@ -270,7 +270,7 @@ const dinnerOptions = [
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center px-[40px] py-[40px] lg:py-[80px]">
+    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center px-[20px] lg:px-[40px] py-[40px] lg:py-[80px]">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-4xl bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 space-y-4 shadow-2xl"

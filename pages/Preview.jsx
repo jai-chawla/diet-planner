@@ -24,25 +24,27 @@ const Preview = () => {
 
   const renderMeal = (title, items, custom) => (
     <div
-      className={`rounded-xl p-4 ${
+      className={`rounded-xl p-5 ${
         isLight
-          ? "bg-gray-100 border border-gray-300 text-black"
+          ? "bg-white border border-gray-200 text-black"
           : "bg-gray-800  border-gray-700 text-gray-300 "
       }`}
     >
-      <h3 className="text-lg font-semibold mb-3">{title}</h3>
+      <h3 className="text-2xl font-semibold mb-3 w-fit bg-gradient-to-r from-[#ff4f03]  to-[#4505d9] bg-clip-text text-transparent">{title}</h3>
 
-      <ul className="space-y-1">
+      <ul className="space-y-2">
         {items?.map((item, i) => (
-          <li key={i} className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-            {item.label}
+          <li key={i} className="flex items-start gap-4 text-lg">
+            <div className="flex items-start justify-center w-fit h-fit p-2">
+            <span className="w-3 h-3 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9]  rounded-full"></span>
+            </div>
+            <span>{item.label}</span>
           </li>
         ))}
 
         {custom && (
           <li className="flex items-center gap-2 text-blue-500">
-            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+            <span className="w-2 h-2 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9] rounded-full"></span>
             {custom}
           </li>
         )}
@@ -50,14 +52,15 @@ const Preview = () => {
     </div>
   );
 
+
   const handleDownloadPDF = async () => {
     if (!pdfRef.current) return;
-    setIsLight(true);
+
     try {
       const dataUrl = await toPng(pdfRef.current, {
         cacheBust: true,
         pixelRatio: 2,
-        backgroundColor: "#ffffff", // IMPORTANT
+        // backgroundColor: "#ffffff", 
       });
 
       const pdf = new jsPDF("p", "mm", "a4");
@@ -67,25 +70,28 @@ const Preview = () => {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      // Calculate ratio
+      // 🔥 ADD MARGIN HERE
+      const margin = 10; // mm (left & right space)
+
+      const usableWidth = pdfWidth - margin * 2;
+      const usableHeight = pdfHeight - margin * 2;
+
       const imgRatio = imgProps.width / imgProps.height;
-      const pdfRatio = pdfWidth / pdfHeight;
+      const pdfRatio = usableWidth / usableHeight;
 
       let finalWidth, finalHeight;
 
       if (imgRatio > pdfRatio) {
-        // Image is wider → fit width
-        finalWidth = pdfWidth;
-        finalHeight = pdfWidth / imgRatio;
+        finalWidth = usableWidth;
+        finalHeight = usableWidth / imgRatio;
       } else {
-        // Image is taller → fit height
-        finalHeight = pdfHeight;
-        finalWidth = pdfHeight * imgRatio;
+        finalHeight = usableHeight;
+        finalWidth = usableHeight * imgRatio;
       }
 
-      // CENTERING (this fixes your issue)
+      // 🔥 CENTER WITH MARGIN
       const x = (pdfWidth - finalWidth) / 2;
-      const y = (pdfHeight - finalHeight) / 2;
+      const y = margin; // top margin
 
       pdf.addImage(dataUrl, "PNG", x, y, finalWidth, finalHeight);
       pdf.save("diet-chart.pdf");
@@ -95,72 +101,142 @@ const Preview = () => {
     }
   };
 
+
+
   return (
-    <div className={`min-h-screen w-[800px] mx-auto  text-white p-6 ${isLight?"bg-white text-black":"bg-[#0f172a]"}`}>
+    <div className={`min-h-screen border font-sans  w-full mx-auto  text-white px-[20px] py-[20px] lg:px-[96px] lg:py-[60px] bg-white text-black`}>
       <div
         ref={pdfRef}
         className={` mx-auto space-y-6  ${isLight ? "bg-white text-black" : "bg-gray-900"
           }`}
       >
+        <div className="flex justify-between items-center">
+         
+            <img src="./logo.jpg" alt="" className="w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] border-4 border-dashed border-gray-300 rounded-full" />
+            <img src="./moto.jpeg" alt="" className="aspect-auto h-[100px] lg:h-[150px] border-4 border-dashed border-gray-300 rounded-full" />
+          
+        </div>
         {/* Header */}
         <div
-          className={`rounded-2xl p-6 ${
-            isLight
-              ? "bg-gray-100  border-gray-300 text-black"
+          className={`rounded-2xl p-6  ${isLight
+              ? "bg-white border-gray-300 text-black"
               : "bg-gray-800  border-gray-700 "
-          }`}
+            }`}
         >
-          <h1 className="text-3xl font-bold mb-10 text-center">
-            Personalized Diet Chart
+          <h1
+            className={`w-fit mx-auto text-5xl font-bold mb-20 text-center bg-gradient-to-r from-[#ff4f03]  to-[#4505d9] bg-clip-text text-transparent
+              `}
+          >
+            Personal Information
           </h1>
 
           <div
-            className={`grid md:grid-cols-3 gap-4 text-sm ${
-              isLight ? "text-gray-700" : "text-gray-300"
-            }`}
+            className={`grid md:grid-cols-3 gap-4 text-lg text-black`}
           >
-            <p><strong>Name:</strong> {data.name}</p>
-            <p><strong>Age:</strong> {data.age}</p>
-            <p><strong>Weight:</strong> {data.weight} kg</p>
-            <p><strong>Height:</strong> {data.height} cm</p>
-            <p><strong>Workout:</strong> {data.workout} days/week</p>
-            <p><strong>BMR:</strong> {data.bmr}</p>
-            {data.tdee && <p><strong>TDEE:</strong> {data.tdee}</p>}
+            <p><strong>Name:</strong> <span className="text-black">{data.name}</span></p>
+            <p><strong>Age:</strong> <span className="text-black">{data.age}</span></p>
+            <p><strong>Weight:</strong> <span className="text-black">{data.weight} kg</span></p>
+            <p><strong>Height:</strong> <span className="text-black">{data.height} cm</span></p>
+            <p className="capitalize"><strong>Gender:</strong> <span className="text-black">{data.gender} </span></p>
+            <p><strong>Workout:</strong> <span className="text-black">{data.workout} days/week</span></p>
+            <p><strong>BMR:</strong> <span className="text-black">{data.bmr}</span></p>
+            <p><strong>BMI:</strong> <span className="text-black">{data.bmi}</span></p>
+            {data.tdee && <p><strong>TDEE:</strong> <span className="text-black">{data.tdee}</span></p>}
           </div>
         </div>
 
-        {/* Meals */}
-        <div className="grid md:grid-cols-3 gap-4">
-          {renderMeal("Breakfast", data.breakfast, data.breakfastCustom)}
-          {renderMeal("Lunch", data.lunch, data.lunchCustom)}
-          {renderMeal("Dinner", data.dinner, data.dinnerCustom)}
-        </div>
-
-        {/* Instructions */}
-        {data.instructions?.filter(i => i.trim() !== "").length > 0 && (
-          <div
-            className={`rounded-xl p-4 ${
-              isLight
-                ? "bg-gray-100 border border-gray-300 text-black"
-                : "bg-gray-800 border border-gray-700 text-gray-300 "
-            }`}
-          >
+        {data.fitnessGoal?.length > 0 && (
+          <div className=" border-gray-300 rounded-xl p-4">
             <h3 className="text-lg font-semibold mb-3">
-              Special Instructions
+              Fitness Goal - {data.fitnessGoal[0].label}
+            </h3>
+          </div>
+        )}
+
+        {data.medicalConditions?.length > 0 && (
+          <div
+            className={`rounded-xl p-4 mb-20 ${isLight
+              ? " text-black"
+              : "bg-gray-800 border border-gray-700 text-gray-300"
+              }`}
+          >
+            <h3 className="text-xl font-semibold mb-3">
+              Medical Conditions
             </h3>
 
             <ul className="space-y-1">
-              {data.instructions
-                .filter((i) => i.trim() !== "")
-                .map((item, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2"></span>
-                    {item}
-                  </li>
-                ))}
+              {data.medicalConditions.map((item, i) => (
+                <li key={i} className="flex items-center gap-2 text-lg">
+                  <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                  {item.label}
+                </li>
+              ))}
             </ul>
           </div>
         )}
+
+        {/* <div className="border border-blue-600"></div> */}
+
+        <h1 className="w-fit mx-auto text-5xl font-bold mb-10 text-center bg-gradient-to-r from-[#ff4f03]  to-[#4505d9] bg-clip-text text-transparent">
+          Customised Diet Plan
+        </h1>
+
+        {/* Meals */}
+        <div className="grid grid-cols-1 gap-6">
+          {renderMeal("Early Morning (Detox Drink)",data.earlyMorning,data.earlyMorningCustom)}
+          {renderMeal("Breakfast", data.breakfast, data.breakfastCustom)}
+          {renderMeal("Lunch", data.lunch, data.lunchCustom)}
+          {renderMeal("Evening Brunch",data.brunch,data.brunchCustom)}
+          {renderMeal("Dinner", data.dinner, data.dinnerCustom)}
+        </div>
+
+
+
+
+        {(
+          data.instructions?.filter(i => i.trim() !== "").length > 0 ||
+          data.instructionsSelected?.length > 0
+        ) && (
+            <div
+              className={`rounded-xl p-4 ${isLight
+                  ? "bg-gray-100 border border-gray-300 text-black"
+                  : "bg-gray-800 border border-gray-700 text-gray-300"
+                }`}
+            >
+              <h3 className="text-2xl font-semibold mb-3 w-fit text-blue-600">
+                Special Instructions
+              </h3>
+
+              <ul className="space-y-1">
+
+                {/* ✅ Selected predefined instructions */}
+                {data.instructionsSelected?.map((item, i) => (
+                  <li key={`sel-${i}`} className="flex items-center gap-4 capitalize text-lg">
+                    <span className="w-3 h-3 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9] rounded-full"></span>
+                    {item.label}
+                  </li>
+                ))}
+
+                {/* ✅ Custom typed instructions */}
+                {data.instructions
+                  ?.filter((i) => i.trim() !== "")
+                  .map((item, i) => (
+                    <li key={`custom-${i}`} className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9] rounded-full"></span>
+                      {item}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
+
+
+
+        <footer className="border-2 border-gray-300 border-dashed p-4 text-xl rounded-lg italic font-semibold text-gray-700 mt-20 flex flex-col justify-end gap-5 bg-white">
+          <div>Expertly designed by Jitender Chawla — Certified Fitness Trainer & Certified Nutritionist.</div>
+          <div>Contact No- +919990156329</div>
+          <div>Email- jitender71chawla@gmail.com</div>
+        </footer>
       </div>
 
       {/* Buttons */}

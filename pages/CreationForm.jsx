@@ -13,25 +13,40 @@ const MealGrid = ({
   breakfastCustom,
   lunchCustom,
   dinnerCustom,
+  earlyMorningCustom,
   setBreakfastCustom,
   setLunchCustom,
   setDinnerCustom,
+  setEarlyMorningCustom,
+  brunchCustom,
+  setBrunchCustom,
+  disableCustom = false, // ✅ NEW
 }) => {
-  const hasCustom = form[name]?.some((i) => i.value === "custom");
+ const hasCustom =
+  !disableCustom &&
+  form[name]?.some((i) => i.value === "custom");
 
   const customValue =
-    name === "breakfast"
-      ? breakfastCustom
-      : name === "lunch"
-        ? lunchCustom
-        : dinnerCustom;
+    name === "earlyMorning"
+      ? earlyMorningCustom
+      : name === "breakfast"
+        ? breakfastCustom
+        : name === "lunch"
+          ? lunchCustom
+          : name === "brunch"
+            ? brunchCustom
+            : dinnerCustom;
 
-  const setCustomValue =
-    name === "breakfast"
-      ? setBreakfastCustom
-      : name === "lunch"
-        ? setLunchCustom
-        : setDinnerCustom;
+const setCustomValue =
+  name === "earlyMorning"
+    ? setEarlyMorningCustom
+    : name === "breakfast"
+    ? setBreakfastCustom
+    : name === "lunch"
+    ? setLunchCustom
+    : name === "brunch"
+    ? setBrunchCustom
+    : setDinnerCustom;
 
   return (
     <div className="space-y-3">
@@ -83,13 +98,21 @@ const CreationForm = () => {
     workout: "1",
     bmr: 0,
     tdee: 0,
+    earlyMorning:[],
     breakfast: [],
     lunch: [],
-    dinner: []
+    brunch: [],
+    dinner: [],
+    bmi:0,
+    fitnessGoal: [],
+    medicalConditions: [],
+    instructionsSelected: [],
   });
 
+  const [earlyMorningCustom, setEarlyMorningCustom] = useState("");
   const [breakfastCustom, setBreakfastCustom] = useState("")
   const [lunchCustom, setLunchCustom] = useState("")
+  const [brunchCustom, setBrunchCustom] = useState("");
   const [dinnerCustom, setDinnerCustom] = useState("")
   const [instructions, setInstructions] = useState([""]);
   const navigate = useNavigate();
@@ -97,47 +120,178 @@ const CreationForm = () => {
   console.log('form', form)
 
 
+  const earlyMorningOptions = [
+  { value: "Warm water + ½ fresh lemon juice", label: "Warm water + ½ fresh lemon juice" },
+  { value: "Soaked Fenugreek (Methi) seeds with Water", label: "Soaked Fenugreek (Methi) seeds with Water" },
+  { value: "one tea spoon of apple cider vinegar with warm water", label: "one tea spoon of apple cider vinegar with warm water" },
+  { value: "Papaya & Mint Infused Water", label: "Papaya & Mint Infused Water" },
+  { value: "Papaya and carrot juice", label: "Papaya and carrot juice" },
+  { value: "custom", label: "Custom (Write your own)" },
+];
+
   const breakfastOptions = [
-  { value: "oats", label: "Oats" },
-  { value: "eggs", label: "Eggs" },
-  { value: "milk", label: "Milk" },
-  { value: "banana", label: "Banana" },
-  { value: "peanut_butter", label: "Peanut Butter" },
-  { value: "toast", label: "Brown Bread Toast" },
-  { value: "smoothie", label: "Protein Smoothie" },
-  { value: "poha", label: "Poha" },
-  { value: "upma", label: "Upma" },
-  { value: "idli", label: "Idli" },
+  { value: "One bowl of boiled pulses with lemon and chopped vegetables + one teaspoon olive oil + black pepper + one bowl of dark-coloured fruits (blueberries / black grapes / cherries / strawberries / jamun / plum)", label: "One bowl of boiled pulses with lemon and chopped vegetables + one teaspoon olive oil + black pepper + one bowl of dark-coloured fruits (blueberries / black grapes / cherries / strawberries / jamun / plum)" },
+  { value: "Any South Indian dish + one beetroot + one banana", label: "Any South Indian dish + one beetroot + one banana" },
+  { value: "100 gram steamed broccoli + two slices of pineapple", label: "100 gram steamed broccoli + two slices of pineapple" },
+  { value: "Any oats dish (oats porridge / oats chilla / oats smoothie)", label: "Any oats dish (oats porridge / oats chilla / oats smoothie)" },
+  { value: "Oats + chia seeds + flax seeds + soy/almond milk", label: "Oats + chia seeds + flax seeds + soy/almond milk" },
+  { value: "Besan cheela with paneer/tofu stuffing", label: "Besan cheela with paneer/tofu stuffing" },
+  { value: "Smoothie (plant protein powder  + berries )", label: "Smoothie (plant protein powder  + berries )" },
+  { value: "Vegetable poha + 50gms soaked mixed dry fruits", label: "Vegetable poha + 50gms soaked mixed dry fruits" },
+  { value: "Soya milk/Almond milk + 20gms of mixed seeds", label: "Soya milk/Almond milk + 20gms of mixed seeds" },
   { value: "custom", label: "Custom (Write your own)" },
 ];
 
 const lunchOptions = [
-  { value: "rice", label: "Rice" },
-  { value: "roti", label: "Roti" },
-  { value: "dal", label: "Dal" },
-  { value: "chicken", label: "Chicken Curry" },
-  { value: "paneer", label: "Paneer" },
-  { value: "sabzi", label: "Vegetable Sabzi" },
-  { value: "curd", label: "Curd" },
-  { value: "salad", label: "Salad" },
-  { value: "rajma", label: "Rajma" },
-  { value: "chole", label: "Chole" },
+  { value: "One vegetable chilla + one big apple or one banana", label: "One vegetable chilla + one big apple or one banana" },
+  { value: "One bowl steamed brown rice with boiled dal + green leafy vegetable salad with lemon", label: "One bowl steamed brown rice with boiled dal + green leafy vegetable salad with lemon" },
+  { value: "Whole wheat roti with seasonal vegetables + salad + curd", label: "Whole wheat roti with seasonal vegetables + salad + curd" },
+  { value: "2 multigrain roti + dal + mixed veg + salad", label: "2 multigrain roti + dal + mixed veg + salad" },
+  { value: "Brown rice + rajma/chole + salad + 1 tsp olive oil", label: "Brown rice + rajma/chole + salad + 1 tsp olive oil" },
+  { value: "Quinoa + chickpea salad + veggies + seeds", label: "Quinoa + chickpea salad + veggies + seeds" },
+  { value: "Bajra/jowar roti + green sabzi + tofu/paneer", label: "Bajra/jowar roti + green sabzi + tofu/paneer" },
+  { value: "Vegetable khichdi + curd (if allowed) + salad", label: "Vegetable khichdi + curd (if allowed) + salad" },
+  { value: "Tofu/paneer stir fry + sautéed vegetables", label: "Tofu/paneer stir fry + sautéed vegetables" },
+  { value: "Soya Chunk Curry + Green Salad", label: "Soya Chunk Curry + Green Salad" },
+  { value: "Brown Rice + Rajma / Chole with lemon", label: "Brown Rice + Rajma / Chole with lemon" },
   { value: "custom", label: "Custom (Write your own)" },
 ];
 
-const dinnerOptions = [
-  { value: "roti", label: "Roti" },
-  { value: "dal", label: "Dal" },
-  { value: "paneer", label: "Paneer" },
-  { value: "chicken", label: "Grilled Chicken" },
-  { value: "soup", label: "Soup" },
-  { value: "salad", label: "Salad" },
-  { value: "khichdi", label: "Khichdi" },
-  { value: "vegetables", label: "Boiled Vegetables" },
-  { value: "egg_white", label: "Egg Whites" },
-  { value: "fish", label: "Fish" },
+
+const brunchOptions = [
+  { value: "Roasted Chickpea Salad", label: "Roasted Chickpea Salad" },
+  { value: "Vegan Protein Smoothie", label: "Vegan Protein Smoothie" },
+  { value: "Sprouts (Moong dal + soaked peanuts + tomato + onion + lemon + Black pepper)", label: "Sprouts (Moong dal + soaked peanuts + tomato + onion + lemon + Black pepper)" },
+  { value: "Oats Vegetable Upma", label: "Oats Vegetable Upma" },
+  { value: "Any Seasonal Fruit", label: "Any Seasonal Fruit" },
+  { value: "Vegetable sandwich", label: "Vegetable sandwich" },
   { value: "custom", label: "Custom (Write your own)" },
 ];
+
+
+const dinnerOptions = [
+  { value: "Tofu / soy chunks (50 gram)", label: "Tofu / soy chunks (50 gram)" },
+  { value: "One bowl of sprouts (moong dal / kidney beans / chickpeas) with lemon and black pepper or 30 gram peanut sprouts", label: "One bowl of sprouts (moong dal / kidney beans / chickpeas) with lemon and black pepper or 30 gram peanut sprouts" },
+  { value: "One seasonal fruit + 100 gram fruit yogurt + 20 gram mixed soaked seeds", label: "One seasonal fruit + 100 gram fruit yogurt + 20 gram mixed soaked seeds" },
+  { value: "Grilled Tofu with Steamed Vegetables", label: "Grilled Tofu with Steamed Vegetables" },
+  { value: "Any dish of oats (oats porridge/daliya/chella)", label: "Any dish of oats (oats porridge/daliya/chella)" },
+  { value: "Brown Rice with Rajma", label: "Brown Rice with Rajma" },
+  { value: "Mix vegetable soup", label: "Mix vegetable soup" },
+  { value: "Grilled Vegetable sandwich", label: "Grilled Vegetable sandwich" },
+  { value: "One bowl of brown rice with any dal + Lemon + green leafy salad", label: "One bowl of brown rice with any dal + Lemon + green leafy salad" },
+  { value: "custom", label: "Custom (Write your own)" },
+];
+
+
+const medicalOptions = [
+  // Musculo-Skeletal
+  { value: "joint_stiffness", label: "Joint stiffness/swelling" },
+  { value: "spasms", label: "Spasms/cramps" },
+  { value: "fracture", label: "Broken/fractured bones" },
+  { value: "sprain", label: "Strains/sprains" },
+  { value: "back_pain", label: "Back/hip pain" },
+  { value: "shoulder_pain", label: "Shoulder/neck/arm/hand pain" },
+  { value: "leg_pain", label: "Leg/foot pain" },
+  { value: "chest_pain", label: "Chest/ribs/abdominal pain" },
+  { value: "walking_problem", label: "Problems walking" },
+  { value: "tmj", label: "Jaw pain/TMJ" },
+  { value: "tendonitis", label: "Tendonitis" },
+  { value: "bursitis", label: "Bursitis" },
+  { value: "arthritis", label: "Arthritis" },
+  { value: "osteoporosis", label: "Osteoporosis" },
+  { value: "scoliosis", label: "Scoliosis" },
+  { value: "bone_disease", label: "Bone or joint disease" },
+
+  // Circulatory & Respiratory
+  { value: "dizziness", label: "Dizziness" },
+  { value: "breath_short", label: "Shortness of breath" },
+  { value: "fainting", label: "Fainting" },
+  { value: "cold_extremities", label: "Cold feet or hands" },
+  { value: "cold_sweats", label: "Cold sweats" },
+  { value: "swollen_ankles", label: "Swollen ankles" },
+  { value: "pressure_sores", label: "Pressure sores" },
+  { value: "varicose", label: "Varicose veins" },
+  { value: "blood_clots", label: "Blood clots" },
+  { value: "stroke", label: "Stroke" },
+  { value: "heart_condition", label: "Heart condition" },
+  { value: "allergies", label: "Allergies" },
+  { value: "sinus", label: "Sinus problems" },
+  { value: "asthma", label: "Asthma" },
+  { value: "high_bp", label: "High blood pressure" },
+  { value: "low_bp", label: "Low blood pressure" },
+  { value: "lymphedema", label: "Lymphedema" },
+
+  // Skin
+  { value: "rashes", label: "Rashes" },
+  { value: "skin_allergy", label: "Allergies (Skin)" },
+  { value: "athletes_foot", label: "Athlete’s foot" },
+  { value: "warts", label: "Warts" },
+  { value: "moles", label: "Moles" },
+  { value: "acne", label: "Acne" },
+  { value: "cosmetic_surgery", label: "Cosmetic surgery" },
+
+  // Digestive
+  { value: "indigestion", label: "Indigestion" },
+  { value: "constipation", label: "Constipation" },
+  { value: "bloating", label: "Gas/Bloating" },
+  { value: "diarrhea", label: "Diarrhea" },
+  { value: "ibs", label: "Irritable bowel syndrome" },
+  { value: "crohns", label: "Crohn’s disease" },
+  { value: "colitis", label: "Colitis" },
+
+  // Nervous System
+  { value: "numbness", label: "Numbness/tingling" },
+  { value: "fatigue", label: "Fatigue" },
+  { value: "chronic_pain", label: "Chronic pain" },
+  { value: "sleep_disorder", label: "Sleep disorders" },
+  { value: "paralysis", label: "Paralysis" },
+  { value: "epilepsy", label: "Epilepsy" },
+  { value: "multiple_sclerosis", label: "Multiple sclerosis" },
+  { value: "parkinsons", label: "Parkinson’s disease" },
+
+  // Reproductive
+  { value: "pregnancy", label: "Pregnancy" },
+  { value: "pms", label: "PMS" },
+  { value: "menopause", label: "Menopause" },
+  { value: "endometriosis", label: "Endometriosis" },
+  { value: "fertility", label: "Fertility concerns" },
+
+  // Other
+  { value: "loss_appetite", label: "Loss of appetite" },
+  { value: "depression", label: "Depression" },
+  { value: "concentration", label: "Difficulty concentrating" },
+  { value: "alcohol", label: "Alcohol use" },
+  { value: "smoking", label: "Nicotine use" },
+  { value: "caffeine", label: "Caffeine use" },
+  { value: "diabetes", label: "Diabetes" },
+  { value: "cancer", label: "Cancer" },
+  { value: "surgeries", label: "Surgeries" },
+
+  { value: "none", label: "None" },
+];
+
+const fitnessGoalOptions = [
+  { value: "fat_loss", label: "Fat Loss" },
+  { value: "muscle_gain", label: "Muscle Gain" },
+  { value: "weight_gain", label: "Weight Gain" },
+  { value: "maintenance", label: "Maintenance" },
+  { value: "strength", label: "Strength Training" },
+  { value: "endurance", label: "Endurance" },
+  { value: "general_fitness", label: "General Fitness" },
+];
+
+const instructionOptions = [
+  { value: "drink at least 8-10 glass of water every day", label: "drink at least 8-10 glass of water every day" },
+  { value: "take low sodium diet as salt accumulate water in body (water retention)", label: "take low sodium diet as salt accumulate water in body (water retention)" },
+  { value: "eat healthy carbs, before two hours of exercise", label: "eat healthy carbs, before two hours of exercise" },
+  { value: "avoid long gaps in meal", label: "avoid long gaps in meal" },
+  { value: "strength training 5 times a week + cardio daily", label: "strength training 5 times a week + cardio daily" },
+  { value: "take high fiber diet", label: "take high fiber diet" },
+  { value: "Avoid processed and packed foods", label: "Avoid processed and packed foods" },
+  { value: "Manage stress level", label: "Manage stress level" }
+];
+
+
 
   // Dropdown options
   const genderOptions = [
@@ -173,14 +327,30 @@ const dinnerOptions = [
 
   const toggleItem = (meal, item) => {
     setForm((prev) => {
-      const exists = prev[meal].find((i) => i.value === item.value);
-
       let updated;
+
+      const exists = prev[meal].find((i) => i.value === item.value);
 
       if (exists) {
         updated = prev[meal].filter((i) => i.value !== item.value);
       } else {
         updated = [...prev[meal], item];
+      }
+
+      // 🔥 special logic for medicalConditions
+      if (meal === "medicalConditions") {
+        if (item.value === "none") {
+          updated = [item];
+        } else {
+          updated = updated.filter((i) => i.value !== "none");
+        }
+      }
+
+      if (meal === "fitnessGoal") {
+        return {
+          ...prev,
+          [meal]: [item], // ✅ only one allowed
+        };
       }
 
       return {
@@ -237,6 +407,8 @@ const dinnerOptions = [
 
       let multiplier = 1.2;
 
+      let bmi=weight/(height/100)**2
+
       if (workout === "3") multiplier = 1.375;
       if (workout === "5") multiplier = 1.55;
       if (workout === "7") multiplier = 1.725;
@@ -245,21 +417,27 @@ const dinnerOptions = [
 
       setForm((prev) => ({
         ...prev,
+        bmi: bmi.toFixed(1),
         bmr: Math.round(bmr),
         tdee,
       }));
     }
   }, [form.weight, form.height, form.age, form.gender, form.workout]);
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const finalData = {
       ...form,
+      earlyMorningCustom,
       breakfastCustom,
       lunchCustom,
+      brunchCustom,
       dinnerCustom,
+      medicalConditions: form.medicalConditions, // ✅ explicitly include
       instructions,
+      instructionsSelected: form.instructionsSelected,
     };
 
     // ✅ store in localStorage
@@ -268,6 +446,8 @@ const dinnerOptions = [
     // ✅ navigate with state
     navigate("/preview", { state: finalData });
   };
+
+
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center px-[20px] lg:px-[40px] py-[40px] lg:py-[80px]">
@@ -350,6 +530,20 @@ const dinnerOptions = [
             className="w-[60%] bg-white/10 border border-white/10 p-2 rounded-lg text-gray-300"
           />
         </div>
+
+        {/* BMR */}
+        <div className="flex gap-5 items-center justify-between">
+          <span className="whitespace-nowrap">
+            BMI (Body Mass Index):
+          </span>
+          <input
+            type="number"
+            value={form.bmi}
+            readOnly
+            placeholder="BMI"
+            className="w-[60%] bg-white/10 border border-white/10 p-2 rounded-lg text-gray-300"
+          />
+        </div>
         
         <div className="flex gap-5 items-center justify-between">
           <span className="whitespace-nowrap">TDEE (Total Daily Energy Expenditure):</span>
@@ -361,6 +555,42 @@ const dinnerOptions = [
           className="w-[60%] bg-white/10 border border-white/10 p-2 rounded-lg text-gray-300"
         />
         </div>
+
+        <MealGrid
+          label="Fitness Goal"
+          name="fitnessGoal"
+          options={fitnessGoalOptions}
+          form={form}
+          toggleItem={toggleItem}
+          disableCustom={true}
+        />
+
+        <MealGrid
+          label="Medical Conditions"
+          name="medicalConditions"
+          options={medicalOptions}
+          form={form}
+          toggleItem={toggleItem}
+          disableCustom={true} // 🔥 disables textarea
+        />
+
+        <MealGrid
+          label="Early Morning"
+          name="earlyMorning"
+          options={earlyMorningOptions}
+          form={form}
+          toggleItem={toggleItem}
+          breakfastCustom={breakfastCustom}
+          lunchCustom={lunchCustom}
+          dinnerCustom={dinnerCustom}
+          earlyMorningCustom={earlyMorningCustom}
+          setBreakfastCustom={setBreakfastCustom}
+          setLunchCustom={setLunchCustom}
+          setDinnerCustom={setDinnerCustom}
+          setEarlyMorningCustom={setEarlyMorningCustom}
+          brunchCustom={brunchCustom}
+          setBrunchCustom={setBrunchCustom}
+        />
 
         {/* Meals */}
         <MealGrid
@@ -375,6 +605,8 @@ const dinnerOptions = [
           setBreakfastCustom={setBreakfastCustom}
           setLunchCustom={setLunchCustom}
           setDinnerCustom={setDinnerCustom}
+          brunchCustom={brunchCustom}
+          setBrunchCustom={setBrunchCustom}
         />
         <MealGrid
           label="Lunch"
@@ -388,7 +620,29 @@ const dinnerOptions = [
           setBreakfastCustom={setBreakfastCustom}
           setLunchCustom={setLunchCustom}
           setDinnerCustom={setDinnerCustom}
+          brunchCustom={brunchCustom}
+          setBrunchCustom={setBrunchCustom}
         />
+
+        <MealGrid
+          label="Brunch"
+          name="brunch"
+          options={brunchOptions}
+          form={form}
+          toggleItem={toggleItem}
+          breakfastCustom={breakfastCustom}
+          lunchCustom={lunchCustom}
+          dinnerCustom={dinnerCustom}
+          earlyMorningCustom={earlyMorningCustom}
+          brunchCustom={brunchCustom}
+          setBreakfastCustom={setBreakfastCustom}
+          setLunchCustom={setLunchCustom}
+          setDinnerCustom={setDinnerCustom}
+          setEarlyMorningCustom={setEarlyMorningCustom}
+          setBrunchCustom={setBrunchCustom}
+        />
+
+
         <MealGrid
           label="Dinner"
           name="dinner"
@@ -401,14 +655,25 @@ const dinnerOptions = [
           setBreakfastCustom={setBreakfastCustom}
           setLunchCustom={setLunchCustom}
           setDinnerCustom={setDinnerCustom}
+          brunchCustom={brunchCustom}
+          setBrunchCustom={setBrunchCustom}
         />
 
 
         <div className="space-y-3">
-  <p className="text-sm text-gray-300">Special Instructions</p>
+          
+
+          <MealGrid
+            label="Special Instructions (Select)"
+            name="instructionsSelected"
+            options={instructionOptions}
+            form={form}
+            toggleItem={toggleItem}
+            disableCustom={true}
+          />
 
           {instructions.map((item, index) => (
-            <div key={index} className="flex gap-2 items-center">
+            <div key={index} className="flex gap-2 items-center capitalize">
               <input
                 type="text"
                 value={item}

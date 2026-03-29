@@ -3,12 +3,14 @@ import React, { useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
+import { useNavigate } from "react-router-dom";
 
 const Preview = () => {
   const location = useLocation();
   const pdfRef = useRef();
   const [isLight, setIsLight] = useState(true);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const data =
     location.state ||
@@ -104,7 +106,23 @@ const Preview = () => {
 
 
   return (
-    <div className={`min-h-screen border font-sans  w-full mx-auto  text-white px-[20px] py-[20px] lg:px-[96px] lg:py-[60px] bg-white text-black`}>
+    <div className={`relative  min-h-screen border font-sans  w-full mx-auto  text-white px-[20px] py-[20px] lg:px-[96px] lg:py-[60px] bg-white text-black`}>
+
+      <div className="absolute top-5 right-5 z-50">
+        <button
+          onClick={() => {
+            localStorage.removeItem("isAuth");
+            navigate("/login");
+          }}
+          className="bg-white/5 border border-white/10 backdrop-blur-lg cursor-pointer
+               text-black px-4 py-2 rounded-lg 
+               hover:bg-white/10 transition"
+        >
+          Logout
+        </button>
+      </div>
+
+
       <div
         ref={pdfRef}
         className={` mx-auto space-y-6  ${isLight ? "bg-white text-black" : "bg-gray-900"

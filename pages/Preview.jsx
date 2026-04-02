@@ -32,7 +32,7 @@ const Preview = () => {
           : "bg-gray-800  border-gray-700 text-gray-300 "
       }`}
     >
-      <h3 className="text-2xl font-semibold mb-3 w-fit bg-gradient-to-r from-[#ff4f03]  to-[#4505d9] bg-clip-text text-transparent">{title}</h3>
+      <h3 className="text-2xl font-semibold mb-3 w-fit bg-gradient-to-r from-[#ff4f03]  to-[#4505d9] bg-clip-text text-transparent">{title} <span className="text-gray-600 text-lg">(Choose anyone as per your taste and availability)</span></h3>
 
       <ul className="space-y-2">
         {items?.map((item, i) => (
@@ -45,9 +45,11 @@ const Preview = () => {
         ))}
 
         {custom && (
-          <li className="flex items-center gap-2 text-blue-500">
-            <span className="w-2 h-2 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9] rounded-full"></span>
-            {custom}
+          <li  className="flex items-start gap-4 text-lg">
+            <div className="flex items-start justify-center w-fit h-fit p-2">
+            <span className="w-3 h-3 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9]  rounded-full"></span>
+            </div>
+            <span className="capitalize">{custom}</span>
           </li>
         )}
       </ul>
@@ -75,7 +77,7 @@ const Preview = () => {
       // 🔥 ADD MARGIN HERE
       const margin = 10; // mm (left & right space)
 
-      const usableWidth = pdfWidth - margin * 2;
+      const usableWidth = pdfWidth 
       const usableHeight = pdfHeight - margin * 2;
 
       const imgRatio = imgProps.width / imgProps.height;
@@ -125,7 +127,7 @@ const Preview = () => {
 
       <div
         ref={pdfRef}
-        className={` mx-auto space-y-6  ${isLight ? "bg-white text-black" : "bg-gray-900"
+        className={` mx-auto space-y-10 ${isLight ? "bg-white text-black" : "bg-gray-900"
           }`}
       >
         <div className="flex justify-between items-center">
@@ -149,7 +151,7 @@ const Preview = () => {
           </h1>
 
           <div
-            className={`grid md:grid-cols-3 gap-4 text-lg text-black`}
+            className={`grid md:grid-cols-3 gap-4 text-lg text-black text-center`}
           >
             <p><strong>Name:</strong> <span className="text-black">{data.name}</span></p>
             <p><strong>Age:</strong> <span className="text-black">{data.age}</span></p>
@@ -163,10 +165,35 @@ const Preview = () => {
           </div>
         </div>
 
+        <div className="max-w-2xl mx-auto p-6 border border-gray-200 shadow-lg rounded-2xl">
+          <h1 className="text-xl font-bold text-center mb-4">
+            BMI Classification
+          </h1>
+
+          <div className="divide-y text-lg">
+            {[
+              { range: "Below 18.5", label: "Underweight" },
+              { range: "18.5 - 24.9", label: "Normal" },
+              { range: "25.0 - 29.9", label: "Overweight" },
+              { range: "30.0 - 34.9", label: "Obese - Class I" },
+              { range: "35.0 - 39.9", label: "Obese - Class II" },
+              { range: "40 and above", label: "Severe Obesity" },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-between py-2 "
+              >
+                <span className="">{item.range}</span>
+                <span className="font-medium">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {data.fitnessGoal?.length > 0 && (
-          <div className=" border-gray-300 rounded-xl p-4">
-            <h3 className="text-lg font-semibold mb-3">
-              Fitness Goal - {data.fitnessGoal[0].label}
+          <div className="border-gray-300 rounded-xl p-4">
+            <h3 className="text-xl font-bold mb-3">
+              Fitness Goal - <span className="font-normal">{data.fitnessGoal.map(item => item.label).join(", ")}</span>
             </h3>
           </div>
         )}

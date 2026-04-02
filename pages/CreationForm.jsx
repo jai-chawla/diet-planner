@@ -139,6 +139,7 @@ const CreationForm = () => {
   { value: "Smoothie (plant protein powder  + berries )", label: "Smoothie (plant protein powder  + berries )" },
   { value: "Vegetable poha + 50gms soaked mixed dry fruits", label: "Vegetable poha + 50gms soaked mixed dry fruits" },
   { value: "Soya milk/Almond milk + 20gms of mixed seeds", label: "Soya milk/Almond milk + 20gms of mixed seeds" },
+  { value: "Sweet corn / Protein salad with tofu cubes / Sweet corn sandwich with tofu or panner / Oats + Peanut butter + Milk smoothie", label: "Sweet corn / Protein salad with tofu cubes / Sweet corn sandwich with tofu or panner / Oats + Peanut butter + Milk smoothie" },
   { value: "custom", label: "Custom (Write your own)" },
 ];
 
@@ -154,6 +155,7 @@ const lunchOptions = [
   { value: "Tofu/paneer stir fry + sautéed vegetables", label: "Tofu/paneer stir fry + sautéed vegetables" },
   { value: "Soya Chunk Curry + Green Salad", label: "Soya Chunk Curry + Green Salad" },
   { value: "Brown Rice + Rajma / Chole with lemon", label: "Brown Rice + Rajma / Chole with lemon" },
+  { value: "Moong dal + Brown rice + Soya granuals", label: "Moong dal + Brown rice + Soya granuals" },
   { value: "custom", label: "Custom (Write your own)" },
 ];
 
@@ -346,12 +348,12 @@ const instructionOptions = [
         }
       }
 
-      if (meal === "fitnessGoal") {
-        return {
-          ...prev,
-          [meal]: [item], // ✅ only one allowed
-        };
-      }
+      // if (meal === "fitnessGoal") {
+      //   return {
+      //     ...prev,
+      //     [meal]: [item], // ✅ only one allowed
+      //   };
+      // }
 
       return {
         ...prev,

@@ -16,6 +16,8 @@ const Preview = () => {
     location.state ||
     JSON.parse(localStorage.getItem("dietData"));
 
+  console.log('data', data)
+
   if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -24,34 +26,39 @@ const Preview = () => {
     );
   }
 
-  const renderMeal = (title, items, custom) => (
+  const renderMeal = (title, items) => (
     <div
-      className={`rounded-xl p-5 ${
-        isLight
+      className={`rounded-xl p-5 ${isLight
           ? "bg-white border border-gray-200 text-black"
-          : "bg-gray-800  border-gray-700 text-gray-300 "
-      }`}
+          : "bg-gray-800 border-gray-700 text-gray-300"
+        }`}
     >
-      <h3 className="text-2xl font-semibold mb-3 w-fit bg-gradient-to-r from-[#ff4f03]  to-[#4505d9] bg-clip-text text-transparent">{title} <span className="text-gray-600 text-lg">(Choose anyone as per your taste and availability)</span></h3>
+      <h3 className="text-2xl font-semibold mb-3 w-fit bg-gradient-to-r from-[#ff4f03] to-[#4505d9] bg-clip-text text-transparent">
+        {title}{" "}
+        <span className="text-gray-600 text-lg">
+          (Choose anyone as per your taste and availability)
+        </span>
+      </h3>
 
       <ul className="space-y-2">
-        {items?.map((item, i) => (
-          <li key={i} className="flex items-start gap-4 text-lg">
-            <div className="flex items-start justify-center w-fit h-fit p-2">
-            <span className="w-3 h-3 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9]  rounded-full"></span>
-            </div>
-            <span>{item.label}</span>
-          </li>
-        ))}
+        {items?.map((item, i) => {
+          // ✅ handle both object + string
+          const value =
+            typeof item === "string"
+              ? item
+              : item?.label || "";
 
-        {custom && (
-          <li  className="flex items-start gap-4 text-lg">
-            <div className="flex items-start justify-center w-fit h-fit p-2">
-            <span className="w-3 h-3 bg-gradient-to-r from-[#d7ff78]  to-[#4505d9]  rounded-full"></span>
-            </div>
-            <span className="capitalize">{custom}</span>
-          </li>
-        )}
+          if (!value) return null;
+
+          return (
+            <li key={i} className="flex items-start gap-4 text-lg">
+              <div className="flex items-start justify-center w-fit h-fit p-2">
+                <span className="w-3 h-3 bg-gradient-to-r from-[#d7ff78] to-[#4505d9] rounded-full"></span>
+              </div>
+              <span className="capitalize">{value}</span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -77,7 +84,7 @@ const Preview = () => {
       // 🔥 ADD MARGIN HERE
       const margin = 10; // mm (left & right space)
 
-      const usableWidth = pdfWidth 
+      const usableWidth = pdfWidth
       const usableHeight = pdfHeight - margin * 2;
 
       const imgRatio = imgProps.width / imgProps.height;
@@ -131,16 +138,16 @@ const Preview = () => {
           }`}
       >
         <div className="flex justify-between items-center">
-         
-            <img src="./logo.jpg" alt="" className="w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] border-4 border-dashed border-gray-300 rounded-full" />
-            <img src="./moto.jpeg" alt="" className="aspect-auto h-[100px] lg:h-[150px] border-4 border-dashed border-gray-300 rounded-full" />
-          
+
+          <img src="./logo.jpg" alt="" className="w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] border-4 border-dashed border-gray-300 rounded-full" />
+          <img src="./moto.jpeg" alt="" className="aspect-auto h-[100px] lg:h-[150px] border-4 border-dashed border-gray-300 rounded-full" />
+
         </div>
         {/* Header */}
         <div
           className={`rounded-2xl p-6  ${isLight
-              ? "bg-white border-gray-300 text-black"
-              : "bg-gray-800  border-gray-700 "
+            ? "bg-white border-gray-300 text-black"
+            : "bg-gray-800  border-gray-700 "
             }`}
         >
           <h1
@@ -228,11 +235,11 @@ const Preview = () => {
 
         {/* Meals */}
         <div className="grid grid-cols-1 gap-6">
-          {renderMeal("Early Morning (Detox Drink)",data.earlyMorning,data.earlyMorningCustom)}
-          {renderMeal("Breakfast", data.breakfast, data.breakfastCustom)}
-          {renderMeal("Lunch", data.lunch, data.lunchCustom)}
-          {renderMeal("Evening Brunch",data.brunch,data.brunchCustom)}
-          {renderMeal("Dinner", data.dinner, data.dinnerCustom)}
+          {renderMeal("Early Morning (Detox Drink)", data.earlyMorning)}
+          {renderMeal("Breakfast", data.breakfast)}
+          {renderMeal("Lunch", data.lunch)}
+          {renderMeal("Evening Brunch", data.brunch)}
+          {renderMeal("Dinner", data.dinner)}
         </div>
 
 
@@ -244,8 +251,8 @@ const Preview = () => {
         ) && (
             <div
               className={`rounded-xl p-4 ${isLight
-                  ? "bg-gray-100 border border-gray-300 text-black"
-                  : "bg-gray-800 border border-gray-700 text-gray-300"
+                ? "bg-gray-100 border border-gray-300 text-black"
+                : "bg-gray-800 border border-gray-700 text-gray-300"
                 }`}
             >
               <h3 className="text-2xl font-semibold mb-3 w-fit text-blue-600">

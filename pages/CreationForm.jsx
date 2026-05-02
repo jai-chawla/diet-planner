@@ -14,6 +14,10 @@ const MealGrid = ({ label, name, options, form, toggleItem, customMeals, setCust
   const entries = customMeals[name] ?? [];
 
   const handleChipClick = (item) => {
+    if (name === "medicalConditions" && item.value === "none") {
+      setCustomMeals((prev) => ({ ...prev, [name]: [] }));
+    }
+
     if (item.value === "custom" && !disableCustom) {
       const alreadySelected = form[name]?.some((i) => i.value === "custom");
       if (!alreadySelected) {
@@ -138,6 +142,8 @@ const CreationForm = () => {
     lunch: [],
     brunch: [],
     dinner: [],
+    fitnessGoal: [],
+    medicalConditions: [],
   });
 
   const [instructions, setInstructions] = useState([""]);
@@ -278,6 +284,7 @@ const CreationForm = () => {
     { value: "cancer", label: "Cancer" },
     { value: "surgeries", label: "Surgeries" },
     { value: "none", label: "None" },
+    { value: "custom", label: "Custom (Write your own)" },
   ];
 
   const fitnessGoalOptions = [
@@ -288,6 +295,7 @@ const CreationForm = () => {
     { value: "strength", label: "Strength Training" },
     { value: "endurance", label: "Endurance" },
     { value: "general_fitness", label: "General Fitness" },
+    { value: "custom", label: "Custom (Write your own)" },
   ];
 
   const instructionOptions = [
@@ -364,7 +372,7 @@ const CreationForm = () => {
     const selected = form[mealName] ?? [];
     const nonCustomItems = selected
       .filter((i) => i.value !== "custom")
-      .map((i) => i.value);
+      .map((i) => i.label ?? i.value);
 
     const hasCustom = selected.some((i) => i.value === "custom");
     const customTexts = hasCustom
@@ -387,7 +395,8 @@ const CreationForm = () => {
       lunch: buildFinalMeal("lunch"),
       brunch: buildFinalMeal("brunch"),
       dinner: buildFinalMeal("dinner"),
-      medicalConditions: form.medicalConditions,
+      fitnessGoal: buildFinalMeal("fitnessGoal"),
+      medicalConditions: buildFinalMeal("medicalConditions"),
       instructionsSelected: form.instructionsSelected,
       instructions,
     };
@@ -462,10 +471,10 @@ const CreationForm = () => {
         </div>
 
         <MealGrid label="Fitness Goal" name="fitnessGoal" options={fitnessGoalOptions}
-          form={form} toggleItem={toggleItem} customMeals={customMeals} setCustomMeals={setCustomMeals} disableCustom={true} />
+          form={form} toggleItem={toggleItem} customMeals={customMeals} setCustomMeals={setCustomMeals} />
 
         <MealGrid label="Medical Conditions" name="medicalConditions" options={medicalOptions}
-          form={form} toggleItem={toggleItem} customMeals={customMeals} setCustomMeals={setCustomMeals} disableCustom={true} />
+          form={form} toggleItem={toggleItem} customMeals={customMeals} setCustomMeals={setCustomMeals} />
 
         <MealGrid label="Early Morning" name="earlyMorning" options={earlyMorningOptions}
           form={form} toggleItem={toggleItem} customMeals={customMeals} setCustomMeals={setCustomMeals} />

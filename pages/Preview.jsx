@@ -26,6 +26,11 @@ const Preview = () => {
     );
   }
 
+  const getItemText = (item) =>
+    typeof item === "string"
+      ? item
+      : item?.label || item?.value || "";
+
   const renderMeal = (title, items) => (
     <div
       className={`rounded-xl p-5 ${isLight
@@ -43,10 +48,7 @@ const Preview = () => {
       <ul className="space-y-2">
         {items?.map((item, i) => {
           // ✅ handle both object + string
-          const value =
-            typeof item === "string"
-              ? item
-              : item?.label || "";
+          const value = getItemText(item);
 
           if (!value) return null;
 
@@ -200,7 +202,7 @@ const Preview = () => {
         {data.fitnessGoal?.length > 0 && (
           <div className="border-gray-300 rounded-xl p-4">
             <h3 className="text-xl font-bold mb-3">
-              Fitness Goal - <span className="font-normal">{data.fitnessGoal.map(item => item.label).join(", ")}</span>
+              Fitness Goal - <span className="font-normal">{data.fitnessGoal.map(getItemText).filter(Boolean).join(", ")}</span>
             </h3>
           </div>
         )}
@@ -220,7 +222,7 @@ const Preview = () => {
               {data.medicalConditions.map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-lg">
                   <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                  {item.label}
+                  {getItemText(item)}
                 </li>
               ))}
             </ul>
